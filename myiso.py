@@ -4,10 +4,10 @@ import gmplot
 import sys
  
 mapname = "intersection.html"
-angles = 8
-durations = [10,7,7]
-#origins = ['559 Nathan Abbott Way, Stanford, CA','160 San Gabriel Drive, Sunnyvale, CA']
-origins = ['2430 Piedmont Ave, Berkeley, CA','2555 Benvenue Ave, Berkeley, CA','2977 College Ave, Berkeley, CA']
+angles = 10
+durations = [15,20,15]
+methods = ['walking','walking','driving']
+origins = ['Toss Noodle Bar, Berkeley','University Hall, Berkeley','Indian Rock Park, Berkeley']
 
 
 
@@ -16,8 +16,8 @@ if len(durations) != len(origins):
 	sys.exit()
 isos = []
 for i in range(len(origins)):
-	print "Generating isochrone {0} for {1} with duration {2}".format(i,origins[i],durations[i])
-	isos.append(isocronut.generate_isochrone_map(origins[i],durations[i],angles))
+	print "Generating isochrone {0} for {1} within {2} minutes {3}".format(i,origins[i],durations[i],methods[i])
+	isos.append(isocronut.get_isochrone(origins[i],durations[i],angles,mode=methods[i]))
 
 
 print "Finding intersection"
