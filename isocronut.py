@@ -77,11 +77,13 @@ def build_url(origin='',
     # using the urlparse() function into path and query
     # Note that this URL should already be URL-encoded
     if mode == 'bicycling':
-        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=bicycling&units=imperial&avoid=tolls|ferries'
+        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=bicycling&units=imperial'
     elif mode == 'walking':
-        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=walking&units=imperial&avoid=tolls|ferries'
+        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=walking&units=imperial'
+    elif mode == 'transit':
+        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=transit&units=imperial'
     else:
-        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&units=imperial&avoid=tolls|ferries'
+        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&units=imperial'
     if access_type == 'personal':
         url = urlparse.urlparse('{0}&origins={1}&destinations={2}&key={3}'.format(prefix,
                                                                                   origin_str,
