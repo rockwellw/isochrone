@@ -14,7 +14,8 @@ from math import cos, sin, tan, sqrt, pi, radians, degrees, asin, atan2
 def build_url(origin='',
               destination='',
               access_type='personal',
-              config_path='config/'):
+              config_path='config/',
+              mode='driving'):
     """
     Determine the url to pass for the desired search.
     This is complicated when using Google Maps for Business.
@@ -75,7 +76,12 @@ def build_url(origin='',
     # Convert the URL string to a URL, which we can parse
     # using the urlparse() function into path and query
     # Note that this URL should already be URL-encoded
-    prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&units=imperial&avoid=tolls|ferries'
+    if mode == 'bicycling':
+        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=bicycling&units=imperial&avoid=tolls|ferries'
+    elif mode == 'walking':
+        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=walking&units=imperial&avoid=tolls|ferries'
+    else:
+        prefix = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&units=imperial&avoid=tolls|ferries'
     if access_type == 'personal':
         url = urlparse.urlparse('{0}&origins={1}&destinations={2}&key={3}'.format(prefix,
                                                                                   origin_str,
@@ -300,7 +306,8 @@ def get_isochrone(origin='',
                   number_of_angles=12,
                   tolerance=0.1,
                   access_type='personal',
-                  config_path='config/'):
+                  config_path='config/',
+                  mode='driving'):
     """
     Putting it all together.
     Given a starting location and amount of time for the isochrone to represent (e.g. a 15 minute isochrone from origin)
@@ -347,7 +354,7 @@ def get_isochrone(origin='',
         for i in range(number_of_angles):
             iso[i] = select_destination(origin, phi1[i], rad1[i], access_type, config_path)
             time.sleep(0.1)
-        url = build_url(origin, iso, access_type, config_path)
+        url = build_url(origin, iso, access_type, config_path, mode)
         data = parse_json(url)
         for i in range(number_of_angles):
             if (data[1][i] < (duration - tolerance)) & (data0[i] != data[0][i]):
