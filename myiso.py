@@ -3,15 +3,23 @@ from shapely.geometry import Polygon
 from shapely.geometry import MultiPolygon
 import gmplot
 import sys
+from tempfile import mkstemp
+from shutil import move
+from os import remove, close
+
+INCLUDE_API = True
 
 MAX_TRIES = 3
- 
-mapname = "intersection.html"
-angles = 12
+DRAW_API = "AIzaSyCViPeu32mSIsvoGaSMXzMdm4mgWeOYEws"
+mapname = "index.html"
+angles = 20
 
 durations = [30,20,35]
 methods = ['drive','drive','drive']
 origins = ['10100 Santa Monica Blvd, Los Angeles','Santa Monica Pier','221 S Grand Ave, Los Angeles, CA 90012']
+durations = durations[:1]
+methods = methods[:1]
+origins = origins[:1]
 
 
 
@@ -37,7 +45,7 @@ for i in range(len(origins)):
 
 for i in range(len(origins)):
 	temp = gmplot.GoogleMapPlotter(isos[i][0][0],isos[i][0][1],14)
-	temp .plot([item[0] for item in isos[i]],[item[1] for item in isos[i]],'cornflowerblue','edge_width=5')
+	temp.plot([item[0] for item in isos[i]],[item[1] for item in isos[i]],'cornflowerblue',edge_width=5)
 	temp.draw("{0}.html".format(origins[i]))
 
 print "Finding intersection"
@@ -70,10 +78,20 @@ else:
 	
 	gmap.draw(mapname)
 
-	# simple1 = gmplot.GoogleMapPlotter(iso1[0][0],iso1[0][1],14)
-	# simple1.plot([item[0] for item in iso1],[item[1] for item in iso1],'cornflowerblue',edge_width=5)
-	# simple1.draw("a.html")
+def replace(file_path, pattern, subst):
+    #Create temp file
+    fh, abs_path = mkstemp()
+    with open(abs_path,'w') as new_file:
+        with open(file_path) as old_file:
+            for line in old_file:
+                new_file.write(line.replace(pattern, subst))
+    close(fh)
+    #Remove original file
+    remove(file_path)
+    #Move new file
+    move(abs_path, file_path)
 
-	# simple2 = gmplot.GoogleMapPlotter(iso2[0][0],iso2[0][1],14)
-	# simple2.plot([item[0] for item in iso2],[item[1] for item in iso2],'cornflowerblue',edge_width=5)
-	# simple2.draw("b.html")
+if INCLUDE_API:
+	replace(mapname,"=true_or_false","=true_or_false&key=" + DRAW_API)
+
+
